@@ -117,6 +117,27 @@ h2{
   padding: 10px 20px 10px 20px;
   text-decoration: none;
   width:60px;
+  transition: all 0.3s;
+  box-shadow: 0 0 0 0 rgba(0,0,0,0), 0 0 0 0 rgba(0,0,0,0);
+
+}
+.btn:hover{
+  color:black;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5), 0 6px 20px 0 rgba(0,0,0,0.4);
+
+}
+.table{
+  display:grid;
+  grid-template-columns: 0.5fr 1fr;
+  grid-template-rows: repeat(1, 1fr);
+  width: 50%;
+  margin: 100px auto 0 auto;
+  text-align: center;
+  row-gap: 2rem;
+  
+}
+.profile-pic{
+  height:175px;
 }
 
 .honk{
