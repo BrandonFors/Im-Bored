@@ -1,0 +1,49 @@
+@keyframes gradient-animation {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+}
+.bacon-gradient-background {
+    background: linear-gradient(300deg, #ff1900, #ff8800, #ddba45, #ffe600);
+    background-size: 180% 180%;
+    animation: gradient-animation 18s ease infinite;
+    width: 100vw;
+}
+.btn{
+    background: #ff6200;
+  background-image: -webkit-linear-gradient(top, #ff6200, #ffa600);
+  background-image: -moz-linear-gradient(top, #ff6200, #ffa600);
+  background-image: -ms-linear-gradient(top, #ff6200, #ffa600);
+  background-image: -o-linear-gradient(top, #ff6200, #ffa600);
+  background-image: linear-gradient(to bottom, #ff6200, #ffa600);
+}
+input[type="text"] {
+    text-align: center;
+    height: 60px;
+    top: 10px;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    font-weight: 200;
+    width: 313px;
+}
+input[type="submit"] {
+    min-height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    border-color: transparent;
+    background-color: #000000;
+    color: #fff;
+    font-size: 30px;
+    border-width: 0;
+    margin:10px;
+}
+.form-container{
+  margin: 50px auto;
+}

@@ -9,12 +9,37 @@
   <link rel="stylesheet" href="/styles/baconstyles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Honk&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Protest+Riot&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class = "bacon-gradient-background">
     <div class = "container">
         <%- include("partials/header.ejs") %>
-
+        <div>
+          <h1>
+            Bacon Image
+          </h1>
+          <h2>
+            Hit this random button to get a randomly sized image or input your own paramaters.
+          </h2>
+        </div>
+        <div>
+          <a class = "btn" //href = "/baconImg">Random Img</a>
+        </div>
+        <div class = "form-container">
+          <form class = "task" action="/baconImg" method="POST">
+            <input type = "text" name="width" value = "" placeholder="Width">
+            <input type = "text" name="height" value = "" placeholder="Height">
+            <input type="submit" value="+">
+          
+          </form>
+        </div>
+        <div>
+          <% if(locals.imgUrl){%>
+          <img src = <%= imgUrl %>/>
+          <% } %>
+        </div>
     </div>
 </body>
 <footer>

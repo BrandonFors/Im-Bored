@@ -5,7 +5,8 @@ const app = express();
 const port = 3000;
 
 const pages= ["/bacon","/imgflip","/blackjack","/nasa"];
-const numPages = 4; 
+const numPages = 4;
+
 
 
 
@@ -29,6 +30,30 @@ app.get("/bacon",(req,res) =>{
     res.render("bacon.ejs");
     
 });
+app.get("/baconImg",(req,res)=>{
+    var width = Math.floor(Math.random() * 400)+201;
+    var height = Math.floor(Math.random() * 400)+201;
+    var url = "https://baconmockup.com/" + width+"/"+height+"/"
+    res.render("bacon.ejs", {imgUrl: url});
+})
+app.post("/baconImg",(req,res)=>{
+    var width = req.body["width"];
+    var height = req.body["height"];
+    console.log(req.body["width"]);
+    console.log(req.body["height"]);
+    if(height == ""){
+        height = Math.floor(Math.random() * 800)+201;
+    }
+    if(width == ""){
+        width = Math.floor(Math.random() * 800)+201;
+    }
+
+    var url = "https://baconmockup.com/" + width+"/"+height+"/"
+    console.log(url)
+    res.render("bacon.ejs", {imgUrl: url});
+    console.log("render");
+})
+
 
 app.get("/imgflip",(req,res) =>{
     res.render("imgflip.ejs");
