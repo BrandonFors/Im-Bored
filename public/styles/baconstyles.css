@@ -35,14 +35,28 @@ input[type="text"] {
 }
 input[type="submit"] {
     min-height: 50px;
-    width: 50px;
-    border-radius: 50%;
+    width: 100px;
     border-color: transparent;
-    background-color: #000000;
+    background: #ff6200;
+    background-image: -webkit-linear-gradient(top, #ff6200, #ffa600);
+    background-image: -moz-linear-gradient(top, #ff6200, #ffa600);
+    background-image: -ms-linear-gradient(top, #ff6200, #ffa600);
+    background-image: -o-linear-gradient(top, #ff6200, #ffa600);
+    background-image: linear-gradient(to bottom, #ff6200, #ffa600);
     color: #fff;
-    font-size: 30px;
+    border-radius: 8px;
+    font-family: "Bebas Neue", sans-serif;
+    color: #ffffff;
+    font-size: 20px;
     border-width: 0;
     margin:10px;
+    transition: all 0.3s;
+    box-shadow: 0 0 0 0 rgba(0,0,0,0), 0 0 0 0 rgba(0,0,0,0);
+}
+input[type="submit"]:hover{
+  color:black;
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5), 0 6px 20px 0 rgba(0,0,0,0.4);
+  cursor: pointer;
 }
 .form-container{
   margin: 50px auto;
