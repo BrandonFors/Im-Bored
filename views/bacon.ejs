@@ -37,11 +37,17 @@
         </div>
         <div>
           <% if(locals.imgUrl){%>
-          <img src = <%= imgUrl %>/>
+          <img src = <%= imgUrl %>/
           <% } %>
           <% if(locals.invalidParam){ %>
           <img src = "images/no.jpg"/>
           <% } %>
+          
+        </div>
+        <div>
+        <% if(locals.imgUrl){%>
+          <a class = "btn" href = <%= imgUrl %>>Download</a>
+        <% } %>
         </div>
     </div>
 </body>
