@@ -6,7 +6,7 @@ const port = 3000;
 
 const pages= ["/bacon","/imgflip","/blackjack","/nasa"];
 const numPages = 4;
-
+var letters = /[a-z]/i;
 
 
 
@@ -39,19 +39,27 @@ app.get("/baconImg",(req,res)=>{
 app.post("/baconImg",(req,res)=>{
     var width = req.body["width"];
     var height = req.body["height"];
+    var url;
     console.log(req.body["width"]);
     console.log(req.body["height"]);
-    if(height == ""){
-        height = Math.floor(Math.random() * 800)+201;
-    }
-    if(width == ""){
-        width = Math.floor(Math.random() * 800)+201;
-    }
+    if(letters.test(width)||letters.test(height)){
+        console.log("letters!!");
+        res.render("bacon.ejs", {invalidParam:true});
+      } else {
+        
+      
+        if(height == ""){
+            height = Math.floor(Math.random() * 800)+201;
+        }
+        if(width == ""){
+            width = Math.floor(Math.random() * 800)+201;
+        }
 
-    var url = "https://baconmockup.com/" + width+"/"+height+"/"
-    console.log(url)
-    res.render("bacon.ejs", {imgUrl: url});
-    console.log("render");
+        url = "https://baconmockup.com/" + width+"/"+height+"/";
+        console.log(url);
+        res.render("bacon.ejs", {imgUrl: url});
+        console.log("render");
+}
 })
 
 

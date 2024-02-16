@@ -25,10 +25,10 @@
           </h2>
         </div>
         <div>
-          <a class = "btn" //href = "/baconImg">Random Img</a>
+          <a class = "btn" href = "/baconImg">Random Img</a>
         </div>
         <div class = "form-container">
-          <form class = "task" action="/baconImg" method="POST">
+          <form class = "dimensions-container" action="/baconImg" method="POST">
             <input type = "text" name="width" value = "" placeholder="Width">
             <input type = "text" name="height" value = "" placeholder="Height">
             <input type="submit" value="Submit">
@@ -38,6 +38,9 @@
         <div>
           <% if(locals.imgUrl){%>
           <img src = <%= imgUrl %>/>
+          <% } %>
+          <% if(locals.invalidParam){ %>
+          <img src = "images/no.jpg"/>
           <% } %>
         </div>
     </div>
