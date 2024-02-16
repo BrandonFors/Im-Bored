@@ -15,7 +15,7 @@ var letters = /[a-z]/i;
 app.use(express.static("public"));
 
 app.use(bodyParser.urlencoded({ extended: true }));
-
+///////////////////////////////////////////////////////HOME\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/",(req,res) =>{
     res.render("index.ejs");
     
@@ -25,6 +25,7 @@ app.get("/about",(req,res) =>{
     res.render("about.ejs");
     
 });
+/////////////////////////////////////////////////////////////BACON\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 app.get("/bacon",(req,res) =>{
     res.render("bacon.ejs");
@@ -63,25 +64,31 @@ app.post("/baconImg",(req,res)=>{
 })
 
 
+
+///////////////////////////////////////////////////////////IMGFLIP\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/imgflip",(req,res) =>{
     res.render("imgflip.ejs");
     
 });
 
+
+//////////////////////////////////////////////////////////////BLACKJACK\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/blackjack",(req,res)=>{
     res.render("blackjack.ejs");
 })
-
+/////////////////////////////////////////////////////////NASA\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/nasa",(req,res) =>{
     res.render("nasa.ejs");
     
 });
-
+///////////////////////////////////////////////////////RANDOM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/random",(req,res)=>{
     var page = pages[Math.floor(Math.random() * numPages)];
     console.log(page);
     res.redirect(page);
 })
+
+
 
 
 app.listen(port, () => {
