@@ -11,6 +11,10 @@ var letters = /[a-z]/i;
 const BLACKJACK_API_URL = "https://www.deckofcardsapi.com/api/deck";
 var deckId;
 var remainingCards;
+var currentBet;
+var numHands;
+var dealerCards = [];
+var playerCards = [];
 
 
 
@@ -79,6 +83,9 @@ app.get("/blackjack",(req,res)=>{
     res.render("blackjack.ejs");
 })
 app.get("/blackjack/play",async(req,res)=>{
+      res.render("blackjack.ejs", {dealer:dealerCards,player:playerCards});
+})
+app.get("/blackjack/play/shuffle", async (req,res)=>{
     try {
         const response = await axios.get(`${BLACKJACK_API_URL}/new/shuffle/`,{
             params:{deck_count:6}
@@ -86,20 +93,20 @@ app.get("/blackjack/play",async(req,res)=>{
         console.log(response);
         deckId = response.data.deck_id;
 
-        res.render("blackjack.ejs", { posts: response.data });
+        res.redirect("/blackjack/play");
       } catch (error) {
         res.status(500).json({ message: "Error fetching data" });
       }
 })
 app.post("/blackjack/play/deal",async(req,res)=>{
-    
+    currentBet = req.body.bet;
     try {
         const response = await axios.get(`${BLACKJACK_API_URL}/${deckId}/draw/`,{
-            params:{count:4}
+            params:{count:numHands*2+2}
         });
         console.log(response);
         deckId = response.data.deck_id;
-        res.render("blackjack.ejs", { posts: response.data });
+        res.redirect("/blackjack/play");
       } catch (error) {
         res.status(500).json({ message: "Error fetching data" });
       }
