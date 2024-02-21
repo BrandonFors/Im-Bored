@@ -3,12 +3,14 @@ import bodyParser from "body-parser";
 
 const app = express();
 const port = 3000;
-
 const pages= ["/bacon","/imgflip","/blackjack","/nasa"];
 const numPages = 4;
+//imgflip variables
 var letters = /[a-z]/i;
-
-
+//blackjack variables
+const BLACKJACK_API_URL = "https://www.deckofcardsapi.com/api/deck";
+var deckId;
+var remainingCards;
 
 
 
@@ -76,6 +78,33 @@ app.get("/imgflip",(req,res) =>{
 app.get("/blackjack",(req,res)=>{
     res.render("blackjack.ejs");
 })
+app.get("/blackjack/play",async(req,res)=>{
+    try {
+        const response = await axios.get(`${BLACKJACK_API_URL}/new/shuffle/`,{
+            params:{deck_count:6}
+        });
+        console.log(response);
+        deckId = response.data.deck_id;
+
+        res.render("blackjack.ejs", { posts: response.data });
+      } catch (error) {
+        res.status(500).json({ message: "Error fetching data" });
+      }
+})
+app.post("/blackjack/play/deal",async(req,res)=>{
+    
+    try {
+        const response = await axios.get(`${BLACKJACK_API_URL}/${deckId}/draw/`,{
+            params:{count:4}
+        });
+        console.log(response);
+        deckId = response.data.deck_id;
+        res.render("blackjack.ejs", { posts: response.data });
+      } catch (error) {
+        res.status(500).json({ message: "Error fetching data" });
+      }
+
+});
 /////////////////////////////////////////////////////////NASA\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/nasa",(req,res) =>{
     res.render("nasa.ejs");
