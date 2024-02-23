@@ -14,5 +14,16 @@
     width: 100vw;
 }
 .card{
-    width:175;
+    width: 125px;
+}
+.blackjack-container{
+    width: 80%;
+    border-radius: 20px;
+    margin: 10px auto 0 auto;
+    background-color: antiquewhite;
+
+}
+.cards{
+    display:flex;
+    justify-content: center;
 }
