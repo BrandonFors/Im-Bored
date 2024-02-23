@@ -12,6 +12,8 @@ var letters = /[a-z]/i;
 const BLACKJACK_API_URL = "https://www.deckofcardsapi.com/api/deck";
 var deckId;
 var remainingCards;
+//place cards, bet, bust?, total values, message within hand elements in this array;
+var playerHands = [];
 var currentBet;
 var numHands;
 var dealerCards = [];
@@ -111,7 +113,7 @@ app.get("/blackjack/play",async(req,res)=>{
           message = "";
       }
 
-      res.render("blackjack.ejs", {dealer:dealerCards,player:playerCards,numHands:numHands,message:message});
+      res.render("blackjack.ejs", {dealer:dealerCards,player:playerHands,numHands:numHands,message:message});
 })
 app.get("/blackjack/play/shuffle", async (req,res)=>{
     try {
