@@ -36,6 +36,15 @@
             <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/>
             <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/>
           </div>
+          <div>
+            <a class = "btn" href = "/blackjack/play/shuffle">Shuffle</a>
+          </div>
+          <form class = "dimensions-container" action="/blackjack/play/deal" method="POST">
+            <input type = "text" name="bet" value = "" placeholder="Bet">
+            <input type = "text" name = "hands" value = "" placeholder="Hand Count">
+            <input type="submit" value="Submit">
+          
+          </form>
 
         </div>
 
