@@ -90,7 +90,8 @@ app.get("/imgflip",(req,res) =>{
 // 0 = betting
 // 1 = in play
 // 2 = complete
-// 3 = veiw results
+// 3 = player done
+// 4 = dealer done / view results
 //GAME STATE SCALE
 // 0 = hand selection
 // 1 = betting
@@ -99,6 +100,10 @@ app.get("/imgflip",(req,res) =>{
 //DEALER HAND STATE SCALE
 // 0 = hidden card
 // 1 = reveal and hit
+//WIN STATUS SCALE
+// 0 = lose
+// 1 = win
+// 2 = push
 
 
 function calcTotalValue(hand){
@@ -134,7 +139,8 @@ app.get("/blackjack/play/shuffle", async (req,res)=>{
             totalValues: 0,
             bust: false,
             handState: 0 ,
-            bet: 0
+            bet: 0,
+            win: 0
           });  
         }
         dealerHand.push({
@@ -263,12 +269,27 @@ app.get("/blackjack/play/dealer",async(req,res)=>{
       dealerHand[0].bust = true;
       //ddd
     }
-
+    for(var x=0; x<numHands;x++ ){
+      if(!(playerHands[x].bust)){
+        if(playerHands[x].totalValues>dealerHand[0].totalValues||dealerHand[0].bust){
+          playerHands[x].win = 1;
+        }else if(playerHands[x].totalValues<dealerHand[0].totalValues){
+          playerHands[x].win = 0;
+        }else{
+          playerHands[x].win = 2;
+        }
+      } else{
+        playerHands[x].win = 0;
+      }
+    }
+    gameState = 4;
+    res.redirect("/blackjack/play");
   }catch{
     res.status(500).json({ message: "Error fetching data" });
 
   }
 })
+//make a reset board/log results
 /////////////////////////////////////////////////////////NASA\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/nasa",(req,res) =>{
     res.render("nasa.ejs");
