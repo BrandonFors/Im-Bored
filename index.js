@@ -15,6 +15,7 @@ var deckId;
 var remainingCards;
 //place cards, bet, bust?, total values, message within hand elements in this array;
 var playerHands = [];
+var dealerHand = [];
 var numHands;
 var dealerCards = [];
 var hiddenCard = [];
@@ -85,16 +86,19 @@ app.get("/imgflip",(req,res) =>{
 
 
 //////////////////////////////////////////////////////////////BLACKJACK\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-//HAND STATE SCALE
+//PLAYER HAND STATE SCALE
 // 0 = betting
 // 1 = in play
 // 2 = complete
-
+// 3 = veiw results
 //GAME STATE SCALE
 // 0 = hand selection
 // 1 = betting
 // 2 = in play
 // 3 = complete
+//DEALER HAND STATE SCALE
+// 0 = hidden card
+// 1 = reveal and hit
 
 
 function calcTotalValue(hand){
@@ -133,6 +137,13 @@ app.get("/blackjack/play/shuffle", async (req,res)=>{
             bet: 0
           });  
         }
+        dealerHand.push({
+          id: 1,
+          cards: [],
+          totalValues: 0,
+          bust: false,
+          handState: 0,
+        });
         gameState = 1;
         activeHand = 0;
         res.redirect("/blackjack/play");
@@ -171,13 +182,14 @@ app.post("/blackjack/play/deal",async(req,res)=>{
         for(var x=0; x<numHands;x++ ){
             playerHands[x].totalValues=calcTotalValue(playerHands[x]);
         }
+        dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
         for(var x=0;x<numHands;x++){
           playerHands[x].bet = currentBets[x];
           playerHands[x].handState = 1;
         }
         gameState = 2;
-        console.log(dealerCards);
         console.log(hiddenCard);
+        console.log(dealerHand);
         console.log(playerHands);
         res.redirect("/blackjack/play");
       } catch (error) {
@@ -234,6 +246,29 @@ app.get("/blackjack/play/stand", (req,res)=>{
     res.status(500).json({ message: "Error fetching data" });
   }
 });
+app.get("/blackjack/play/dealer",async(req,res)=>{
+  
+  try{
+    setTimeout(()=>{},3000);
+    dealerCards.push(hiddenCard[0]);
+    dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
+    while(dealerHand[0].totalValues<17){
+    const response = await axios.get(`${BLACKJACK_API_URL}/${deckId}/draw/`,{
+      params:{count:1}
+    });
+    dealerCards.push(response.data.cards[0]);
+    dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
+    }
+    if(dealerHand[0].totalValues>21){
+      dealerHand[0].bust = true;
+      //ddd
+    }
+
+  }catch{
+    res.status(500).json({ message: "Error fetching data" });
+
+  }
+})
 /////////////////////////////////////////////////////////NASA\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/nasa",(req,res) =>{
     res.render("nasa.ejs");
