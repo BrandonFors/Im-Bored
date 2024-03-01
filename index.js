@@ -22,7 +22,7 @@ var hiddenCard = [];
 var playerCards = [];
 var gameState = 0;
 var activeHand = 0;
-
+var totalMoney = 1000;
 
 
 app.use(express.static("public"));
@@ -104,6 +104,7 @@ app.get("/imgflip",(req,res) =>{
 // 0 = lose
 // 1 = win
 // 2 = push
+
 
 
 function calcTotalValue(hand){
@@ -192,6 +193,7 @@ app.post("/blackjack/play/deal",async(req,res)=>{
         for(var x=0;x<numHands;x++){
           playerHands[x].bet = currentBets[x];
           playerHands[x].handState = 1;
+          totalMoney -= currentBets[x];
         }
         gameState = 2;
         console.log(hiddenCard);
@@ -290,6 +292,36 @@ app.get("/blackjack/play/dealer",async(req,res)=>{
   }
 })
 //make a reset board/log results
+//make a function to check dealer blackjack in begining 
+//make it check for overbetting
+app.get("/blackjack/play/reset", async (req,res)=>{ 
+  try{
+    for(var x=0; x<numHands;x++ ){
+      if(playerHands[x].win==1){
+        totalMoney +=playerHands[x].bet*2
+      }else if(playerHands[x].win==2){
+        totalMoney +=playerHands[x].bet;
+      }else{
+        //nothing
+      }
+      
+
+    }
+    for(var x=0; x<numHands;x++ ){
+      playerHands[x].cards = [];
+      playerHands[x].totalValues =0;
+      playerHands[x].bust = false;
+      playerHands[x].handState = 0;
+      playerHands[x].bet = 0;
+      playerHands[x].win = 0;
+  
+    }
+    gameState = 1;
+    res.redirect("/blackjack/play");
+  }catch{
+    res.status(500).json({ message: "Error fetching data" });
+  }
+});
 /////////////////////////////////////////////////////////NASA\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/nasa",(req,res) =>{
     res.render("nasa.ejs");
