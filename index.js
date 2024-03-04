@@ -205,7 +205,7 @@ app.post("/blackjack/play/deal",async(req,res)=>{
       }
       var currentBets = [currentBet1,currentBet2,currentBet3];
       if(totalMoney-currentBetsTotal<0){
-        
+
         res.redirect("/blackjack/play");
 
       }
@@ -389,6 +389,12 @@ app.get("/blackjack/play/dealer",async(req,res)=>{
         playerHands[x].win = 0;
       }
     }
+    dealerHand[0].handState = 1;
+    for(var x = 0; x<numHands; x++){
+      playerHands[x].handState = 4;
+    }
+    
+
     gameState = 4;
     res.redirect("/blackjack/play");
   }catch{
@@ -428,7 +434,7 @@ app.get("/blackjack/play/reset", async (req,res)=>{
     dealerHand[0].handState = 0;
     dealerHand[0].ace = false;
 
-    gameState = 1;
+    gameState = 0;
     res.redirect("/blackjack/play");
   }catch{
     res.status(500).json({ message: "Error fetching data" });
