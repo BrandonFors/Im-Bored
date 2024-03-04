@@ -434,7 +434,7 @@ app.get("/blackjack/play/reset", async (req,res)=>{
     dealerHand[0].handState = 0;
     dealerHand[0].ace = false;
 
-    gameState = 0;
+    gameState = 1;
     res.redirect("/blackjack/play");
   }catch{
     res.status(500).json({ message: "Error fetching data" });
