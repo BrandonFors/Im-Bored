@@ -17,8 +17,7 @@ var remainingCards;
 var playerHands = [];
 var dealerHand = [];
 var numHands;
-var dealerCards = [];
-var hiddenCard = [];
+var hiddenHand = [];
 var playerCards = [];
 var gameState = 0;
 var activeHand = 0;
@@ -97,6 +96,7 @@ app.get("/imgflip",(req,res) =>{
 // 1 = betting
 // 2 = in play
 // 3 = complete
+// 4 = invalid bet size
 //DEALER HAND STATE SCALE
 // 0 = hidden card
 // 1 = reveal and hit
@@ -109,8 +109,31 @@ app.get("/imgflip",(req,res) =>{
 
 function calcTotalValue(hand){
     var totalValue = 0;
-    hand.cards.forEach((card)=>{totalValue+=parseInt(card.value)})
+    hand.cards.forEach((card)=>{
+      var value = 0;
+      if(card.value == "ACE"){
+        value = 1;
+        hand.ace = true;
+      }else if(card.value=="KING"||card.value=="QUEEN"||card.value=="JACK"){
+        value = 10;
+      }else{
+        value = parseInt(card.value);
+      }
+      totalValue+=value;
+    
+    })
     return totalValue;
+}
+function getTotalValuesString(hand){
+  if(!hand.ace){
+    return "Hand Value: "+hand.totalValues;
+  }else{
+    if(hand.totalValues+10<=21){
+      return "Hand Value: "+(hand.totalValues+10)+" or "+hand.totalValues;
+    }else{
+      return "Hand Value: "+hand.totalValues;
+    }
+  }
 }
 app.get("/blackjack",(req,res)=>{
     
@@ -119,8 +142,8 @@ app.get("/blackjack",(req,res)=>{
 app.get("/blackjack/play",async(req,res)=>{
     
   
-      //make game states on a cale of 0 to whatever and make html code that renders with each one ie buttons/messages
-      res.render("blackjack.ejs", {dealer:dealerCards,player:playerHands,numHands:numHands, gameState: gameState});
+      //make game starts on a scale of 0 to whatever and make html code that renders with each one ie buttons/messages
+      res.render("blackjack.ejs", {dealer:dealerHand,player:playerHands,numHands:numHands, gameState: gameState});
 })
 app.get("/blackjack/play/shuffle", async (req,res)=>{
     console.log('shuffle');
@@ -138,10 +161,15 @@ app.get("/blackjack/play/shuffle", async (req,res)=>{
             id: x,
             cards: [],
             totalValues: 0,
+            totalValuesString: "",
             bust: false,
             handState: 0 ,
             bet: 0,
-            win: 0
+            betId: "bet"+x,
+            win: 0,
+            //you can only ever have one ace count as 11
+            ace: false
+
           });  
         }
         dealerHand.push({
@@ -150,6 +178,7 @@ app.get("/blackjack/play/shuffle", async (req,res)=>{
           totalValues: 0,
           bust: false,
           handState: 0,
+          ace: false
         });
         gameState = 1;
         activeHand = 0;
@@ -159,18 +188,36 @@ app.get("/blackjack/play/shuffle", async (req,res)=>{
       }
 })
 app.post("/blackjack/play/deal",async(req,res)=>{
-    var currentBets = req.body.bets;
     
-    playerHands = [];
-    playerCards = [];
+    
+    
     try {
+      var currentBetsTotal = 0;
+      var currentBet1 = parseInt(req.body.bet1);
+      currentBetsTotal += currentBet1;
+      if(req.body.bet2 !=null){
+        var currentBet2 = parseInt(req.body.bets);
+        currentBetsTotal += currentBet2;
+      } 
+      if(req.body.bet3 !=null){
+        var currentBet3 = parseInt(req.body.bets);
+        currentBetsTotal += currentBet3;
+      }
+      var currentBets = [currentBet1,currentBet2,currentBet3];
+      if(totalMoney-currentBetsTotal<0){
+        
+        res.redirect("/blackjack/play");
+
+      }
+      
+      
         const response = await axios.get(`${BLACKJACK_API_URL}/${deckId}/draw/`,{
             params:{count:numHands*2+2}
         });
         //gives dealer a card and has a hidden card
         console.log(response.data);
-        dealerCards.push(response.data.cards[numHands*2+1]);
-        hiddenCard.push(response.data.cards[numHands]);
+        dealerHand[0].cards.push(response.data.cards[numHands*2+1]);
+        dealerHand[0].cards.push(response.data.cards[numHands]);
         //puts appropriate player cards from response into array
         for(var x=0;x<response.data.cards.length;x++){
             if(!(x==numHands)||!(x==(numHands*2+1))){
@@ -188,15 +235,52 @@ app.post("/blackjack/play/deal",async(req,res)=>{
         }
         for(var x=0; x<numHands;x++ ){
             playerHands[x].totalValues=calcTotalValue(playerHands[x]);
+            getTotalValuesString(playerHands[x]);
         }
         dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
+        getTotalValuesString(dealerHand[0]);
         for(var x=0;x<numHands;x++){
           playerHands[x].bet = currentBets[x];
           playerHands[x].handState = 1;
           totalMoney -= currentBets[x];
         }
-        gameState = 2;
-        console.log(hiddenCard);
+        //check for dealer blackjack
+        dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
+        getTotalValuesString(dealerHand[0]);
+        //check for ace
+        if(dealerHand[0].ace){
+          if(dealerHand[0].totalValues+10==21){
+  
+            //recalc totalvalues
+            dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
+            getTotalValuesString(dealerHand[0]);
+            
+            for(var x=0; x<numHands;x++ ){
+              if(playerHands[x].ace){
+                if(playerHands[x].totalValues<=21){
+                  playerHands[x].totalValues +=10;
+                }
+              }
+              if(!(playerHands[x].bust)){
+                if(playerHands[x].totalValues>dealerHand[0].totalValues||dealerHand[0].bust){
+                  playerHands[x].win = 1;
+                }else if(playerHands[x].totalValues<dealerHand[0].totalValues){
+                  playerHands[x].win = 0;
+                }else{
+                  playerHands[x].win = 2;
+                }
+              } else{
+                playerHands[x].win = 0;
+              }
+            }
+            gameState = 4;
+        }
+        
+        }else{
+          gameState = 2;
+        }
+        
+       
         console.log(dealerHand);
         console.log(playerHands);
         res.redirect("/blackjack/play");
@@ -215,6 +299,8 @@ app.get("/blackjack/play/hit",async(req,res)=>{
         console.log(response.data);
         playerCards.push(response.data.cards[0]);
         playerHands[handIndex].totalValues=calcTotalValue(playerHands[handIndex]);
+        getTotalValuesString(playerHands[handIndex]);
+
         if(playerHands[handIndex].totalValues>21){
           playerHands[handIndex].bust = true;
           playerHands[handIndex].handState = 2;
@@ -258,20 +344,39 @@ app.get("/blackjack/play/dealer",async(req,res)=>{
   
   try{
     setTimeout(()=>{},3000);
-    dealerCards.push(hiddenCard[0]);
     dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
+    if(dealerHand[0].ace){
+      if(dealerHand[0].totalValues+10>=17&&dealerHand[0].totalValues+10<=21){
+        dealerHand[0].totalValues +=10;
+      }
+    }
+    
+    getTotalValuesString(dealerHand[0]);
+
     while(dealerHand[0].totalValues<17){
     const response = await axios.get(`${BLACKJACK_API_URL}/${deckId}/draw/`,{
       params:{count:1}
     });
-    dealerCards.push(response.data.cards[0]);
+    dealerHand[0].cards.push(response.data.cards[0]);
     dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
+    if(dealerHand[0].ace){
+      if(dealerHand[0].totalValues+10>=17&&dealerHand[0].totalValues+10<=21){
+        dealerHand[0].totalValues +=10;
+      }
+    }
+    getTotalValuesString(dealerHand[0]);
     }
     if(dealerHand[0].totalValues>21){
       dealerHand[0].bust = true;
       //ddd
     }
+    
     for(var x=0; x<numHands;x++ ){
+      if(playerHands[x].ace){
+        if(playerHands[x].totalValues<=21){
+          playerHands[x].totalValues +=10;
+        }
+      }
       if(!(playerHands[x].bust)){
         if(playerHands[x].totalValues>dealerHand[0].totalValues||dealerHand[0].bust){
           playerHands[x].win = 1;
@@ -304,18 +409,25 @@ app.get("/blackjack/play/reset", async (req,res)=>{
       }else{
         //nothing
       }
-      
-
     }
     for(var x=0; x<numHands;x++ ){
       playerHands[x].cards = [];
       playerHands[x].totalValues =0;
+      playerHands[x].totalValuesString = "";
       playerHands[x].bust = false;
       playerHands[x].handState = 0;
       playerHands[x].bet = 0;
       playerHands[x].win = 0;
+      playerHands[x].ace = false;
   
     }
+   
+    dealerHand[0].cards = [];
+    dealerHand[0].totalValues = 0;
+    dealerHand[0].bust = false;
+    dealerHand[0].handState = 0;
+    dealerHand[0].ace = false;
+
     gameState = 1;
     res.redirect("/blackjack/play");
   }catch{
