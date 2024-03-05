@@ -192,6 +192,7 @@ app.post("/blackjack/play/deal",async(req,res)=>{
     
     
     try {
+      //check that bet amounts are valid
       var currentBetsTotal = 0;
       var currentBet1 = parseInt(req.body.bet1);
       currentBetsTotal += currentBet1;
@@ -274,12 +275,15 @@ app.post("/blackjack/play/deal",async(req,res)=>{
               }
             }
             gameState = 4;
+            dealerHand[0].handState = 2;
         }
         
         }else{
           gameState = 2;
+          dealerHand[0].handState = 1;
         }
         
+
        
         console.log(dealerHand);
         console.log(playerHands);
@@ -389,7 +393,7 @@ app.get("/blackjack/play/dealer",async(req,res)=>{
         playerHands[x].win = 0;
       }
     }
-    dealerHand[0].handState = 1;
+    dealerHand[0].handState = 2;
     for(var x = 0; x<numHands; x++){
       playerHands[x].handState = 4;
     }
