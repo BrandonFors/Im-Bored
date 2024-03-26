@@ -25,26 +25,87 @@
           </h2>
         </div>
         <div class = "blackjack-container">
-          <%  %>
-          <h3>Dealer</h3>
+          <%if (!locals.dealer) {%>
+            <a class = "btn" href = "/blackjack/play">Play</a>
+          <% }else{ %>
+            <h3>Dealer</h3>
           <div class = "cards">
-            <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/>
-            <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/>
+            <% dealer.forEach((hand)=>{  %>
+            <%if(hand.handState==0){%>
+              <% if(!(hand.cards.length == 0)){ %>
+                <img src = "<%=hand.cards[0].image %>" class = "card"/>
+                <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/>
+              <% } %>
+              
+            <%  %>
+            <%}else if(hand.handState==1){%>
+              <% if(!hand.cards.length == 0){ %>
+                <img src = "<%= hand.cards[0].image %>" class = "card"/>
+                <img src = "<%= dealer.cards[1].image %>" class = "card"/>
+              <% } %>
+            <% } %>
+            <% }) %>
           </div>
           <h3>Player</h3>
           <div class = "cards">
-            <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/>
-            <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/>
+            <% player.forEach((hand)=>{ %>
+            <%if(hand.handState==0){%>
+              
+              
+            <%}else if(hand.handState==1){%>
+
+              <% hand.cards.forEach((card)=>{ %>
+              <img src = "<%= card.image %>" class = "card"/>              
+              <%}) %>
+              <% if(activeHand==hand.id){ %>
+                <!-- We need active hand so we can keep track of place in javascript file -->
+                <a class = "btn" href = "/blackjack/play/hit">Hit</a>
+                <a class = "btn" href = "/blackjack/play/stand">Stand</a>
+              <% } %>
+            <% } else if(hand.handState==2){ %>
+              <% hand.cards.forEach((card)=>{ %>
+                <img src = "<%= card.image %>" class = "card"/>              
+              <%}) %>
+            <% }else if(hand.handState==3){ %>
+              <% hand.cards.forEach((card)=>{ %>
+                <img src = "<%= card.image %>" class = "card"/>              
+              <%}) %>
+
+            <% }else {%>
+              <% hand.cards.forEach((card)=>{ %>
+                <img src = "<%= card.image %>" class = "card"/>              
+              <%}) %>
+              <h2><%= hand.win %></h2>
+            <% } %>
+            
+            <!-- <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/>
+            <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/> -->
+          <%}) %>
+          <% if(gameState == 1){ %>
+            <form class = "dimensions-container" action="/blackjack/play/deal" method="POST">
+              <% player.forEach((hand)=>{ %>
+              <input type = "text" name="<%= hand.betId %>" value = "" placeholder="Bet">
+              <% }) %>
+              <input type="submit" value="Submit">
+            </form>
+          <% } %>
           </div>
-          <div>
-            <a class = "btn" href = "/blackjack/play/shuffle">Shuffle</a>
-          </div>
+          <!-- add statement for betting which returns propper names using hand ids-->
+          <form class = "dimensions-container" action="/blackjack/play/shuffle" method="POST">
+            
+            <input type = "text" name = "hands" value = "" placeholder="Hand Count">
+            <input type="submit" value="Submit">
+          </form>
+          
           <form class = "dimensions-container" action="/blackjack/play/deal" method="POST">
             <input type = "text" name="bet" value = "" placeholder="Bet">
-            <input type = "text" name = "hands" value = "" placeholder="Hand Count">
             <input type="submit" value="Submit">
           
           </form>
+          
+          
+          <% } %>
+          
 
         </div>
 

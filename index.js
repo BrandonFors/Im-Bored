@@ -20,7 +20,7 @@ var numHands;
 var hiddenHand = [];
 var playerCards = [];
 var gameState = 0;
-var activeHand = 0;
+var activeHand = 1;
 var totalMoney = 1000;
 
 
@@ -96,7 +96,8 @@ app.get("/imgflip",(req,res) =>{
 // 1 = betting
 // 2 = in play
 // 3 = complete
-// 4 = invalid bet size
+// 4 = dealer done/view results
+// 5 = invalid bet size
 //DEALER HAND STATE SCALE
 // 0 = hidden card
 // 1 = reveal and hit
@@ -143,9 +144,9 @@ app.get("/blackjack/play",async(req,res)=>{
     
   
       //make game starts on a scale of 0 to whatever and make html code that renders with each one ie buttons/messages
-      res.render("blackjack.ejs", {dealer:dealerHand,player:playerHands,numHands:numHands, gameState: gameState});
+      res.render("blackjack.ejs", {dealer:dealerHand,player:playerHands,numHands:numHands, gameState: gameState, activeHand:activeHand});
 })
-app.get("/blackjack/play/shuffle", async (req,res)=>{
+app.post("/blackjack/play/shuffle", async (req,res)=>{
     console.log('shuffle');
     try {
         
@@ -181,7 +182,7 @@ app.get("/blackjack/play/shuffle", async (req,res)=>{
           ace: false
         });
         gameState = 1;
-        activeHand = 0;
+        
         res.redirect("/blackjack/play");
       } catch (error) {
         res.status(500).json({ message: "Error fetching data" });
@@ -192,16 +193,16 @@ app.post("/blackjack/play/deal",async(req,res)=>{
     
     
     try {
-      //check that bet amounts are valid
+      //check that bet amounts
       var currentBetsTotal = 0;
       var currentBet1 = parseInt(req.body.bet1);
       currentBetsTotal += currentBet1;
       if(req.body.bet2 !=null){
-        var currentBet2 = parseInt(req.body.bets);
+        var currentBet2 = parseInt(req.body.bet2);
         currentBetsTotal += currentBet2;
       } 
       if(req.body.bet3 !=null){
-        var currentBet3 = parseInt(req.body.bets);
+        var currentBet3 = parseInt(req.body.bet3);
         currentBetsTotal += currentBet3;
       }
       var currentBets = [currentBet1,currentBet2,currentBet3];
@@ -221,7 +222,7 @@ app.post("/blackjack/play/deal",async(req,res)=>{
         dealerHand[0].cards.push(response.data.cards[numHands]);
         //puts appropriate player cards from response into array
         for(var x=0;x<response.data.cards.length;x++){
-            if(!(x==numHands)||!(x==(numHands*2+1))){
+            if((!(x==numHands))&&(!(x==(numHands*2+1)))){
                 playerCards.push(response.data.cards[x]);
             }
         }
@@ -231,7 +232,7 @@ app.post("/blackjack/play/deal",async(req,res)=>{
           }
         }else{
           for(var x=0; x<playerCards.length;x++ ){
-            playerHands[x%(numHands-1)].cards.push(playerCards[(x)]);
+            playerHands[(x+1)%(numHands)].cards.push(playerCards[(x)]);
           }
         }
         for(var x=0; x<numHands;x++ ){
@@ -275,12 +276,12 @@ app.post("/blackjack/play/deal",async(req,res)=>{
               }
             }
             gameState = 4;
-            dealerHand[0].handState = 2;
+            dealerHand[0].handState = 0;
         }
         
         }else{
           gameState = 2;
-          dealerHand[0].handState = 1;
+          activeHand = 1;
         }
         
 
@@ -298,10 +299,10 @@ app.get("/blackjack/play/hit",async(req,res)=>{
         const response = await axios.get(`${BLACKJACK_API_URL}/${deckId}/draw/`,{
             params:{count:1}
         });
-        var handIndex = req.body.handIndex;
+        var handIndex = (activeHand-1);
         
         console.log(response.data);
-        playerCards.push(response.data.cards[0]);
+        playerHands[handIndex].cards.push(response.data.cards[0]);
         playerHands[handIndex].totalValues=calcTotalValue(playerHands[handIndex]);
         getTotalValuesString(playerHands[handIndex]);
 
@@ -324,6 +325,7 @@ app.get("/blackjack/play/hit",async(req,res)=>{
         }else{
           //nothing tehe
         }
+        console.log(playerHands);
         res.redirect("/blackjack/play");
         }   
       catch (error) {
@@ -333,7 +335,7 @@ app.get("/blackjack/play/hit",async(req,res)=>{
 });
 app.get("/blackjack/play/stand", (req,res)=>{
   try{
-    var handIndex =req.body.handIndex;
+    var handIndex =activeHand-1;
     playerHands[handIndex].handState = 3;
     if(!(activeHand+1>numHands)){
       activeHand++;
@@ -343,6 +345,7 @@ app.get("/blackjack/play/stand", (req,res)=>{
   }catch(error){
     res.status(500).json({ message: "Error fetching data" });
   }
+  console.log(playerHands);
 });
 app.get("/blackjack/play/dealer",async(req,res)=>{
   
@@ -393,7 +396,7 @@ app.get("/blackjack/play/dealer",async(req,res)=>{
         playerHands[x].win = 0;
       }
     }
-    dealerHand[0].handState = 2;
+    dealerHand[0].handState = 1;
     for(var x = 0; x<numHands; x++){
       playerHands[x].handState = 4;
     }
