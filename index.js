@@ -250,7 +250,7 @@ app.post("/blackjack/play/deal",async(req,res)=>{
         dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
         getTotalValuesString(dealerHand[0]);
         //check for ace
-        if(dealerHand[0].ace){
+       
           if(dealerHand[0].totalValues+10==21){
   
             //recalc totalvalues
@@ -279,7 +279,7 @@ app.post("/blackjack/play/deal",async(req,res)=>{
             dealerHand[0].handState = 0;
         }
         
-        }else{
+        else{
           gameState = 2;
           activeHand = 1;
         }
@@ -337,7 +337,7 @@ app.get("/blackjack/play/stand", (req,res)=>{
   try{
     var handIndex =activeHand-1;
     playerHands[handIndex].handState = 3;
-    if(!(activeHand+1>numHands)){
+    if(activeHand+1<=numHands){
       activeHand++;
     }else{
       gameState = 3;
@@ -346,6 +346,7 @@ app.get("/blackjack/play/stand", (req,res)=>{
     res.status(500).json({ message: "Error fetching data" });
   }
   console.log(playerHands);
+  res.redirect("/blackjack/play");
 });
 app.get("/blackjack/play/dealer",async(req,res)=>{
   
@@ -423,24 +424,32 @@ app.get("/blackjack/play/reset", async (req,res)=>{
         //nothing
       }
     }
-    for(var x=0; x<numHands;x++ ){
-      playerHands[x].cards = [];
-      playerHands[x].totalValues =0;
-      playerHands[x].totalValuesString = "";
-      playerHands[x].bust = false;
-      playerHands[x].handState = 0;
-      playerHands[x].bet = 0;
-      playerHands[x].win = 0;
-      playerHands[x].ace = false;
-  
-    }
-   
-    dealerHand[0].cards = [];
-    dealerHand[0].totalValues = 0;
-    dealerHand[0].bust = false;
-    dealerHand[0].handState = 0;
-    dealerHand[0].ace = false;
+    playerHands = [];
+    dealerHand = [];
+    for(var x=1;x<=numHands;x++){
+      playerHands.push({
+        id: x,
+        cards: [],
+        totalValues: 0,
+        totalValuesString: "",
+        bust: false,
+        handState: 0 ,
+        bet: 0,
+        betId: "bet"+x,
+        win: 0,
+        //you can only ever have one ace count as 11
+        ace: false
 
+      });  
+    }
+    dealerHand.push({
+      id: 1,
+      cards: [],
+      totalValues: 0,
+      bust: false,
+      handState: 0,
+      ace: false
+    });
     gameState = 1;
     res.redirect("/blackjack/play");
   }catch{
