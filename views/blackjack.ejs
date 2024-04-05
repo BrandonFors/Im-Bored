@@ -29,58 +29,99 @@
             <a class = "btn" href = "/blackjack/play">Play</a>
           <% }else{ %>
             <h3>Dealer</h3>
-          <div class = "cards">
+          <div class = "all-hands">
             <% dealer.forEach((hand)=>{  %>
+              <div class = "hand">
             <%if(hand.handState==0){%>
               <% if(!(hand.cards.length == 0)){ %>
+                <div class = "cards">
                 <img src = "<%=hand.cards[0].image %>" class = "card"/>
                 <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/>
+                </div>
+                <h2><%= hand.totalValuesString %></h2>
+
               <% } %>
               
             <%  %>
             <%}else if(hand.handState==1){%>
               <% if(!hand.cards.length == 0){ %>
-                <img src = "<%= hand.cards[0].image %>" class = "card"/>
-                <img src = "<%= hand.cards[1].image %>" class = "card"/>
+                <div class = "cards">
+                  <% hand.cards.forEach((card)=>{ %>
+                    <img src = "<%= card.image %>" class = "card"/>              
+                  <%}) %>
+                </div>
+                <h2><%= hand.totalValuesString %></h2>
+
               <% } %>
             <% } %>
             <% }) %>
           </div>
+        </div>
           <h3>Player</h3>
-          <div class = "cards">
+          <h2>Money: <%= money %></h2>
+          <div class = "all-hands">
             <% player.forEach((hand)=>{ %>
+            <div class = "hand">
             <%if(hand.handState==0){%>
               
               
             <%}else if(hand.handState==1){%>
-
+              <div class = "cards">
               <% hand.cards.forEach((card)=>{ %>
               <img src = "<%= card.image %>" class = "card"/>              
               <%}) %>
+              </div>
+              <h2><%= hand.totalValuesString %></h2>
+              <div class = "buttons">
               <% if(activeHand==hand.id){ %>
                 <!-- We need active hand so we can keep track of place in javascript file -->
                 <a class = "btn" href = "/blackjack/play/hit">Hit</a>
                 <a class = "btn" href = "/blackjack/play/stand">Stand</a>
               <% } %>
+              </div>
             <% } else if(hand.handState==2){ %>
+              <div class = "cards">
               <% hand.cards.forEach((card)=>{ %>
                 <img src = "<%= card.image %>" class = "card"/>              
               <%}) %>
+              </div>
+              <h2><%= hand.totalValuesString %></h2>
+
             <% }else if(hand.handState==3){ %>
+              <div class = "cards">
+
               <% hand.cards.forEach((card)=>{ %>
                 <img src = "<%= card.image %>" class = "card"/>              
               <%}) %>
+              </div>
+              <h2><%= hand.totalValuesString %></h2>
+
 
             <% }else {%>
+              <div class = "cards">
+
               <% hand.cards.forEach((card)=>{ %>
                 <img src = "<%= card.image %>" class = "card"/>              
               <%}) %>
-              <h2><%= hand.win %></h2>
+              </div>
+              <h2><%= hand.totalValuesString %></h2>
+              <% if(hand.win == 0){ %>
+                <h2>LOSE</h2>
+              <% }else if(hand.win ==1){ %>
+                <h2>WIN</h2>
+
+              <% }else{ %>
+                <h2>PUSH</h2>
+              <% } %>
+              
             <% } %>
+          </div>
+          
             
             <!-- <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/>
             <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/> -->
           <%}) %>
+        </div>
           <% if(gameState==0){ %>
             <form class = "dimensions-container" action="/blackjack/play/shuffle" method="POST">
             
@@ -101,18 +142,17 @@
           <% }else if(gameState ==4){ %>
             <a class = "btn" href = "/blackjack/play/reset">Deal New Hand</a>
           <% } %>
-          
-          </div>
+          <% } %>
+    </div>
          
         
           
           
-          <% } %>
           
-
-        </div>
-
+          
     </div>
+
+
 </body>
 <footer>
   <%- include("partials/footer.ejs") %>

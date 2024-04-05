@@ -1,0 +1,3 @@
+$ touch .gitignore
+# anywhere in .gitignore
+node_modules

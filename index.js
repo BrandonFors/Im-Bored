@@ -18,6 +18,7 @@ var playerHands = [];
 var dealerHand = [];
 var numHands;
 var hiddenHand = [];
+var hiddenCard;
 var playerCards = [];
 var gameState = 0;
 var activeHand = 1;
@@ -144,7 +145,7 @@ app.get("/blackjack/play",async(req,res)=>{
     
   
       //make game starts on a scale of 0 to whatever and make html code that renders with each one ie buttons/messages
-      res.render("blackjack.ejs", {dealer:dealerHand,player:playerHands,numHands:numHands, gameState: gameState, activeHand:activeHand});
+      res.render("blackjack.ejs", {dealer:dealerHand,player:playerHands,numHands:numHands, gameState: gameState, activeHand:activeHand, money: totalMoney});
 })
 app.post("/blackjack/play/shuffle", async (req,res)=>{
     console.log('shuffle');
@@ -177,6 +178,7 @@ app.post("/blackjack/play/shuffle", async (req,res)=>{
           id: 1,
           cards: [],
           totalValues: 0,
+          totalValuesString: "",
           bust: false,
           handState: 0,
           ace: false
@@ -251,7 +253,7 @@ app.post("/blackjack/play/deal",async(req,res)=>{
         getTotalValuesString(dealerHand[0]);
         //check for ace
        
-          if(dealerHand[0].totalValues+10==21){
+          if(dealerHand[0].ace&&dealerHand[0].totalValues+10==21){
   
             //recalc totalvalues
             dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
@@ -276,7 +278,11 @@ app.post("/blackjack/play/deal",async(req,res)=>{
               }
             }
             gameState = 4;
-            dealerHand[0].handState = 0;
+            dealerHand[0].handState = 1;
+            playerHands.forEach((hand)=>{
+              hand.handState = 3;
+            });
+            
         }
         
         else{
@@ -426,6 +432,10 @@ app.get("/blackjack/play/reset", async (req,res)=>{
     }
     playerHands = [];
     dealerHand = [];
+    playerCards = [];
+
+    console.log(playerHands);
+    console.log(dealerHand);
     for(var x=1;x<=numHands;x++){
       playerHands.push({
         id: x,
@@ -441,15 +451,20 @@ app.get("/blackjack/play/reset", async (req,res)=>{
         ace: false
 
       });  
+      console.log("yep");
     }
     dealerHand.push({
       id: 1,
       cards: [],
       totalValues: 0,
+      totalValuesString: "",
       bust: false,
       handState: 0,
       ace: false
     });
+    console.log(playerHands);
+    console.log(dealerHand);
+    console.log("yay");
     gameState = 1;
     res.redirect("/blackjack/play");
   }catch{

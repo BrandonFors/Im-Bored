@@ -23,10 +23,27 @@
     background-color: antiquewhite;
 
 }
-.cards{
+.all-hands{
     display:flex;
+
     justify-content: center;
 }
+.hand{
+    display:flex;
+    justify-content: center;
+    flex-direction: column;
+
+}
+.cards{
+    display:flex;
+    justify-content: cetner;
+}
+.buttons{
+    display:flex;
+    justify-content: cetner;
+}
+
+.button
 input[type="text"] {
     text-align: center;
     height: 60px;
