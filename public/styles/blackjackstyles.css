@@ -32,6 +32,7 @@
     display:flex;
     justify-content: center;
     flex-direction: column;
+    padding: 20px;
 
 }
 .cards{
@@ -40,7 +41,7 @@
 }
 .buttons{
     display:flex;
-    justify-content: cetner;
+    justify-content: center;
 }
 
 .button

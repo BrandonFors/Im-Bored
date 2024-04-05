@@ -128,12 +128,12 @@ function calcTotalValue(hand){
 }
 function getTotalValuesString(hand){
   if(!hand.ace){
-    return "Hand Value: "+hand.totalValues;
+    hand.totalValuesString= "Hand Value: " + hand.totalValues;
   }else{
     if(hand.totalValues+10<=21){
-      return "Hand Value: "+(hand.totalValues+10)+" or "+hand.totalValues;
+      hand.totalValuesString = "Hand Value: " + (hand.totalValues+10)+" or "+hand.totalValues;
     }else{
-      return "Hand Value: "+hand.totalValues;
+      hand.totalValuesString = "Hand Value: " + hand.totalValues;
     }
   }
 }
@@ -220,7 +220,7 @@ app.post("/blackjack/play/deal",async(req,res)=>{
         });
         //gives dealer a card and has a hidden card
         console.log(response.data);
-        dealerHand[0].cards.push(response.data.cards[numHands*2+1]);
+        hiddenCard = response.data.cards[numHands*2+1];
         dealerHand[0].cards.push(response.data.cards[numHands]);
         //puts appropriate player cards from response into array
         for(var x=0;x<response.data.cards.length;x++){
@@ -253,35 +253,32 @@ app.post("/blackjack/play/deal",async(req,res)=>{
         getTotalValuesString(dealerHand[0]);
         //check for ace
        
-          if(dealerHand[0].ace&&dealerHand[0].totalValues+10==21){
+          if(dealerHand[0].totalValues==10&&hiddenCard.value == "ACE"){
   
             //recalc totalvalues
-            dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
-            getTotalValuesString(dealerHand[0]);
+            // dealerHand[0].cards.push(hiddenCard);
+            // dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
+            // getTotalValuesString(dealerHand[0]);
             
-            for(var x=0; x<numHands;x++ ){
-              if(playerHands[x].ace){
-                if(playerHands[x].totalValues<=21){
-                  playerHands[x].totalValues +=10;
-                }
-              }
-              if(!(playerHands[x].bust)){
-                if(playerHands[x].totalValues>dealerHand[0].totalValues||dealerHand[0].bust){
-                  playerHands[x].win = 1;
-                }else if(playerHands[x].totalValues<dealerHand[0].totalValues){
-                  playerHands[x].win = 0;
-                }else{
-                  playerHands[x].win = 2;
-                }
-              } else{
-                playerHands[x].win = 0;
-              }
-            }
-            gameState = 4;
-            dealerHand[0].handState = 1;
-            playerHands.forEach((hand)=>{
-              hand.handState = 3;
-            });
+            // for(var x=0; x<numHands;x++ ){
+            //   if(playerHands[x].ace){
+            //     if(playerHands[x].totalValues<=21){
+            //       playerHands[x].totalValues +=10;
+            //     }
+            //   }
+            //   if(!(playerHands[x].bust)){
+            //     if(playerHands[x].totalValues>dealerHand[0].totalValues||dealerHand[0].bust){
+            //       playerHands[x].win = 1;
+            //     }else if(playerHands[x].totalValues<dealerHand[0].totalValues){
+            //       playerHands[x].win = 0;
+            //     }else{
+            //       playerHands[x].win = 2;
+            //     }
+            //   } else{
+            //     playerHands[x].win = 0;
+            //   }
+            // }
+           res.redirect("/blackjack/play/dealer");
             
         }
         
@@ -357,7 +354,7 @@ app.get("/blackjack/play/stand", (req,res)=>{
 app.get("/blackjack/play/dealer",async(req,res)=>{
   
   try{
-    setTimeout(()=>{},3000);
+    dealerHand[0].cards.push(hiddenCard);
     dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
     if(dealerHand[0].ace){
       if(dealerHand[0].totalValues+10>=17&&dealerHand[0].totalValues+10<=21){
@@ -423,6 +420,7 @@ app.get("/blackjack/play/reset", async (req,res)=>{
   try{
     for(var x=0; x<numHands;x++ ){
       if(playerHands[x].win==1){
+        
         totalMoney +=playerHands[x].bet*2
       }else if(playerHands[x].win==2){
         totalMoney +=playerHands[x].bet;
