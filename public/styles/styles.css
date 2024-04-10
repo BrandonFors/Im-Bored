@@ -46,6 +46,17 @@ h3{
   font-size: 2rem;
   margin-top:0;
 }
+label{
+  font-family: "Honk", system-ui;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "MORF" 15,
+    "SHLN" 50;
+  font-size: 2rem;
+  margin-top:0;
+}
 p{
   font-family: "Protest Riot", sans-serif;
   font-weight: 400;

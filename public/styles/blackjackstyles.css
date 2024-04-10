@@ -1,14 +1,14 @@
 .btn{
-    background: #ff6200;
-  background-image: -webkit-linear-gradient(top, #006915, #a70000);
-  background-image: -moz-linear-gradient(top, #006915, #a70000);
-  background-image: -ms-linear-gradient(top, #006915, #a70000);
-  background-image: -o-linear-gradient(top, #006915, #a70000);
-  background-image: linear-gradient(to bottom, #006915, #a70000);
+    background: #006915;
+  background-image: -webkit-linear-gradient(top, #006915, #2da800);
+  background-image: -moz-linear-gradient(top, #006915, #2da800);
+  background-image: -ms-linear-gradient(top, #006915, #2da800);
+  background-image: -o-linear-gradient(top, #006915, #2da800);
+  background-image: linear-gradient(to bottom, #006915, #2da800);
   
 }
 .blackjack-gradient-background {
-    background: linear-gradient(300deg, #2da800, #006915, #a70000, #f40000);
+    background: linear-gradient(300deg, #39d500, #2da800, #007718, #084d00);
     background-size: 180% 180%;
     animation: gradient-animation 18s ease infinite;
     width: 100vw;
@@ -44,7 +44,7 @@
     justify-content: center;
 }
 
-.button
+
 input[type="text"] {
     text-align: center;
     height: 60px;
@@ -59,12 +59,12 @@ input[type="submit"] {
     min-height: 50px;
     width: 100px;
     border-color: transparent;
-    background: #ff6200;
-    background-image: -webkit-linear-gradient(top, #ff6200, #ffa600);
-    background-image: -moz-linear-gradient(top, #ff6200, #ffa600);
-    background-image: -ms-linear-gradient(top, #ff6200, #ffa600);
-    background-image: -o-linear-gradient(top, #ff6200, #ffa600);
-    background-image: linear-gradient(to bottom, #ff6200, #ffa600);
+    background: #006915;
+    background-image: -webkit-linear-gradient(top, #006915, #2da800);
+    background-image: -moz-linear-gradient(top, #006915, #2da800);
+    background-image: -ms-linear-gradient(top, #006915, #2da800);
+    background-image: -o-linear-gradient(top, #006915, #2da800);
+    background-image: linear-gradient(to bottom, #006915, #2da800);
     color: #fff;
     border-radius: 8px;
     font-family: "Bebas Neue", sans-serif;
@@ -79,4 +79,15 @@ input[type="submit"]:hover{
   color:black;
   box-shadow: 0 8px 16px 0 rgba(0,0,0,0.5), 0 6px 20px 0 rgba(0,0,0,0.4);
   cursor: pointer;
+}
+.game-text{
+    font-family: "Honk", system-ui;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings:
+    "MORF" 15,
+    "SHLN" 50;
+  font-size: 2rem;
+  margin:0;
 }

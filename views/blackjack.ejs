@@ -28,7 +28,7 @@
           <%if (!locals.dealer) {%>
             <a class = "btn" href = "/blackjack/play">Play</a>
           <% }else{ %>
-            <h3>Dealer</h3>
+            <h2>Dealer</h2>
           <div class = "all-hands">
             <% dealer.forEach((hand)=>{  %>
               <div class = "hand">
@@ -38,7 +38,7 @@
                 <img src = "<%=hand.cards[0].image %>" class = "card"/>
                 <img src="https://deckofcardsapi.com/static/img/back.png" class = "card"/>
                 </div>
-                <h2><%= hand.totalValuesString %></h2>
+                <h2 class = "game-text"><%= hand.totalValuesString %></h2>
 
               <% } %>
               
@@ -50,15 +50,18 @@
                     <img src = "<%= card.image %>" class = "card"/>              
                   <%}) %>
                 </div>
-                <h2><%= hand.totalValuesString %></h2>
+                <h2 class = "game-text"><%= hand.totalValuesString %></h2>
+                <% if(hand.bust){ %>
+                  <h2 class = "game-text">BUST</h2>
+                <%}%>
 
               <% } %>
             <% } %>
             <% }) %>
           </div>
         </div>
-          <h3>Player</h3>
-          <h2>Money: <%= money %></h2>
+          <h2>Player</h2>
+          <h2 class = "game-text">Money: <%= money %></h2>
           <div class = "all-hands">
             <% player.forEach((hand)=>{ %>
             <div class = "hand">
@@ -71,7 +74,7 @@
               <img src = "<%= card.image %>" class = "card"/>              
               <%}) %>
               </div>
-              <h2><%= hand.totalValuesString %></h2>
+              <h2 class = "game-text"><%= hand.totalValuesString %></h2>
               <% console.log(hand.totalValuesString) %>
               <div class = "buttons">
               <% if(activeHand==hand.id){ %>
@@ -86,8 +89,10 @@
                 <img src = "<%= card.image %>" class = "card"/>              
               <%}) %>
               </div>
-              <h2><%= hand.totalValuesString %></h2>
-
+              <h2 class = "game-text"><%= hand.totalValuesString %></h2>
+              <% if(hand.bust){ %>
+                <h2 class = "game-text">BUST</h2>
+              <%}%>
             <% }else if(hand.handState==3){ %>
               <div class = "cards">
 
@@ -95,9 +100,10 @@
                 <img src = "<%= card.image %>" class = "card"/>              
               <%}) %>
               </div>
-              <h2><%= hand.totalValuesString %></h2>
-
-
+              <h2 class = "game-text"><%= hand.totalValuesString %></h2>
+              <% if(hand.bust){ %>
+                <h2 class = "game-text">BUST</h2>
+              <%}%>
             <% }else {%>
               <div class = "cards">
 
@@ -105,14 +111,18 @@
                 <img src = "<%= card.image %>" class = "card"/>              
               <%}) %>
               </div>
-              <h2><%= hand.totalValuesString %></h2>
+              <h2 class = "game-text"><%= hand.totalValuesString %></h2>
+              <% if(hand.bust){ %>
+                <h2 class = "game-text">BUST</h2>
+              <%}else{  %>
               <% if(hand.win == 0){ %>
-                <h2>LOSE</h2>
+                <h2 class = "game-text">LOSE</h2>
               <% }else if(hand.win ==1){ %>
-                <h2>WIN</h2>
+                <h2 class = "game-text">WIN</h2>
 
               <% }else{ %>
-                <h2>PUSH</h2>
+                <h2 class = "game-text">PUSH</h2>
+              <% } %>
               <% } %>
               
             <% } %>
@@ -124,18 +134,37 @@
           <%}) %>
         </div>
           <% if(gameState==0){ %>
-            <form class = "dimensions-container" action="/blackjack/play/shuffle" method="POST">
             
-              <input type = "text" name = "hands" value = "" placeholder="Hand Count">
+
+            
+            <form class = "dimensions-container" action="/blackjack/play/shuffle" method="POST">
+              <label for="hands" >Select Amount of Hands:</label>
+              <select name="hands" id="hands">
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+              </select>
               <input type="submit" value="Submit">
             </form>
           <%}else if(gameState == 1){ %>
             <form class = "dimensions-container" action="/blackjack/play/deal" method="POST">
+              <label for="hands" >Bet:</label>
               <% player.forEach((hand)=>{ %>
-              <input type = "text" name="<%= hand.betId %>" value = "" placeholder="Bet">
+              <select name="<%= hand.betId %>" id="hands" placeholder="100">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="500">500</option>
+                <option value="1000">1000</option>
+              </select>
               <% }) %>
               <input type="submit" value="Submit">
             </form>
+            <a class = "btn" href = "/blackjack/play/resetMoney">Reset Money</a>
+
           <% }else if(gameState == 2){ %>
             
           <% }else if(gameState == 3){ %>

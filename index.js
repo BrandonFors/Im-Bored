@@ -212,7 +212,7 @@ app.post("/blackjack/play/deal",async(req,res)=>{
 
         res.redirect("/blackjack/play");
 
-      }
+      }else{
       
       
         const response = await axios.get(`${BLACKJACK_API_URL}/${deckId}/draw/`,{
@@ -253,7 +253,14 @@ app.post("/blackjack/play/deal",async(req,res)=>{
         getTotalValuesString(dealerHand[0]);
         //check for ace
        
-          if(dealerHand[0].totalValues==10&&hiddenCard.value == "ACE"){
+          if((dealerHand[0].totalValues==10&&hiddenCard.value == "ACE")||
+          (dealerHand[0].totalValues ==1 &&hiddenCard.value == "KING")||
+          (dealerHand[0].totalValues ==1 &&hiddenCard.value == "QUEEN")||
+          (dealerHand[0].totalValues ==1 &&hiddenCard.value == "JACK")||
+          (dealerHand[0].totalValues ==1 &&hiddenCard.value == "10")
+
+
+        ){
   
             //recalc totalvalues
             // dealerHand[0].cards.push(hiddenCard);
@@ -280,18 +287,18 @@ app.post("/blackjack/play/deal",async(req,res)=>{
             // }
            res.redirect("/blackjack/play/dealer");
             
-        }
-        
-        else{
+        }else{
           gameState = 2;
           activeHand = 1;
+          res.redirect("/blackjack/play");
         }
         
 
        
         console.log(dealerHand);
         console.log(playerHands);
-        res.redirect("/blackjack/play");
+        
+      }
       } catch (error) {
         res.status(500).json({ message: "Error fetching data" });
       }
@@ -469,6 +476,10 @@ app.get("/blackjack/play/reset", async (req,res)=>{
     res.status(500).json({ message: "Error fetching data" });
   }
 });
+app.get("/blackjack/play/resetMoney", async (req,res)=>{
+  totalMoney = 1000;
+  res.redirect("/blackjack/play");
+})
 /////////////////////////////////////////////////////////NASA\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/nasa",(req,res) =>{
     res.render("nasa.ejs");
