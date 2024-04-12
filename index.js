@@ -485,12 +485,21 @@ app.get("/nasa",(req,res) =>{
     res.render("nasa.ejs");
     
 });
+/////////////////////////////////////////////////////CALCULATOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+app.get("/calculator",(req,res) =>{
+  res.render("calculator.ejs");
+  
+});
+app.post("/calculator",(req,res)=>{
+  res.render("calculator.ejs", {image:"/images/ryanmeme.jpg", num1:req.body.num1, num2: req.body.num2})
+})
 ///////////////////////////////////////////////////////RANDOM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/random",(req,res)=>{
     var page = pages[Math.floor(Math.random() * numPages)];
     console.log(page);
     res.redirect(page);
 })
+
 
 
 

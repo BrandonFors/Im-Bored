@@ -195,3 +195,13 @@ p{
   font-weight: 400;
   font-style: normal;
 }
+.calculator {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.big-img{
+  margin: 50px auto 0 auto;
+  width: 50rem;
+
+}
