@@ -61,7 +61,8 @@
           </div>
         </div>
           <h2>Player</h2>
-          <h2 class = "game-text">Money: <%= money %></h2>
+        
+          <h2 class = "game-text">Money: <%= money %> Resets: <%= resets %> </h2>
           <div class = "all-hands">
             <% player.forEach((hand)=>{ %>
             <div class = "hand">
@@ -161,7 +162,7 @@
                 <option value="1000">1000</option>
               </select>
               <% }) %>
-              <input type="submit" value="Submit">
+              <input type="submit" value="Bet">
             </form>
             <a class = "btn" href = "/blackjack/play/resetMoney">Reset Money</a>
 

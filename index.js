@@ -23,6 +23,7 @@ var playerCards = [];
 var gameState = 0;
 var activeHand = 1;
 var totalMoney = 1000;
+var numResets = 0;
 
 var nasaAPIKEY= "NNzgahJt0d8mfLEYzA2ovvN1eGJO7hlUYCojD6Iw";
 
@@ -152,7 +153,15 @@ app.get("/blackjack",(req,res)=>{
 app.get("/blackjack/play",async(req,res)=>{
     
       //returns passes in necesary objects and values for the front end to react with
-      res.render("blackjack.ejs", {dealer:dealerHand,player:playerHands,numHands:numHands, gameState: gameState, activeHand:activeHand, money: totalMoney});
+      res.render("blackjack.ejs", {
+        dealer:dealerHand,
+        player:playerHands,
+        numHands:numHands, 
+        gameState: gameState, 
+        activeHand:activeHand, 
+        money: totalMoney, 
+        resets: numResets
+      });
 })
 //shuffle post method called when player selects the number of hands they want and presses submit
 //number of hands cannot be changed between rounds
@@ -287,15 +296,14 @@ app.post("/blackjack/play/deal",async(req,res)=>{
           (dealerHand[0].totalValues ==1 &&hiddenCard.value == "QUEEN")||
           (dealerHand[0].totalValues ==1 &&hiddenCard.value == "JACK")||
           (dealerHand[0].totalValues ==1 &&hiddenCard.value == "10")
-
-
         ){
-  
+          //redirects to dealer if the dealer has 21 bc game is over
            res.redirect("/blackjack/play/dealer");
             
         }else{
           gameState = 2;
           activeHand = 1;
+          //if the dealer doesn't have 21 the game will continue as normally
           res.redirect("/blackjack/play");
         }
         
@@ -310,73 +318,99 @@ app.post("/blackjack/play/deal",async(req,res)=>{
       }
 
 });
+//get method that grants the active hand another card
 app.get("/blackjack/play/hit",async(req,res)=>{
     try {
+      //makes an api request to draw one card from the deck
         const response = await axios.get(`${BLACKJACK_API_URL}/${deckId}/draw/`,{
             params:{count:1}
         });
+        //gets the index within the playerHands array by subtracting one from activeHand
         var handIndex = (activeHand-1);
         
         console.log(response.data);
+        //puts the card from the api response into the active hand's card array
         playerHands[handIndex].cards.push(response.data.cards[0]);
+        //recalcs the total value after the card is added
         playerHands[handIndex].totalValues=calcTotalValue(playerHands[handIndex]);
         getTotalValuesString(playerHands[handIndex]);
-
+        //checks to see if the hand is busted
         if(playerHands[handIndex].totalValues>21){
           playerHands[handIndex].bust = true;
           playerHands[handIndex].handState = 2;
+          //if there is another hand to be played increase activeHand value to move to the next hand
+          //if not then move to the next stage of the game
           if(!(activeHand+1>numHands)){
             activeHand++;
+            res.redirect("/blackjack/play");
           }else{
             gameState = 3;
+            res.redirect("/blackjack/play/dealer");
           }
-          
+          //if the hand has 21 move to the next hand
         }else if(playerHands[handIndex].totalValues==21){
           playerHands[handIndex].handState = 2;
+          //if there is another hand to be played increase activeHand value to move to the next hand
+          //if not then move to the next stage of the game
           if(!(activeHand+1>numHands)){
             activeHand++;
+            res.redirect("/blackjack/play");
           }else{
             gameState = 3;
+            res.redirect("/blackjack/play/dealer");
+
           }
         }else{
           //nothing tehe
+          res.redirect("/blackjack/play");
         }
         console.log(playerHands);
-        res.redirect("/blackjack/play");
+        //redirect to main method
+      
         }   
       catch (error) {
         res.status(500).json({ message: "Error fetching data" });
       }
 
 });
+//called when player wants to stop the current hand and move on to playing the next
 app.get("/blackjack/play/stand", (req,res)=>{
   try{
     var handIndex =activeHand-1;
     playerHands[handIndex].handState = 3;
+    //if there is another hand to be played increase activeHand value to move to the next hand
+    //if not then move to the next stage of the game
     if(activeHand+1<=numHands){
       activeHand++;
+      res.redirect("/blackjack/play");
     }else{
       gameState = 3;
+      res.redirect("/blackjack/play/dealer");
     }
   }catch(error){
     res.status(500).json({ message: "Error fetching data" });
   }
   console.log(playerHands);
-  res.redirect("/blackjack/play");
+  
 });
+//method that plays through the dealer
 app.get("/blackjack/play/dealer",async(req,res)=>{
   
   try{
+    //adds the hidnen card to the dealer hand 
     dealerHand[0].cards.push(hiddenCard);
     dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
+    //if the dealer hand has an ace and the value
     if(dealerHand[0].ace){
+      //Since aces are counted as 1 by default check if the ace can count as 11 and if that value is above 17 
+      //(dealer stands on 17 or more)
       if(dealerHand[0].totalValues+10>=17&&dealerHand[0].totalValues+10<=21){
         dealerHand[0].totalValues +=10;
       }
     }
     
     getTotalValuesString(dealerHand[0]);
-
+    //
     while(dealerHand[0].totalValues<17){
     const response = await axios.get(`${BLACKJACK_API_URL}/${deckId}/draw/`,{
       params:{count:1}
@@ -392,7 +426,7 @@ app.get("/blackjack/play/dealer",async(req,res)=>{
     }
     if(dealerHand[0].totalValues>21){
       dealerHand[0].bust = true;
-      //ddd
+      
     }
     
     for(var x=0; x<numHands;x++ ){
@@ -484,6 +518,7 @@ app.get("/blackjack/play/reset", async (req,res)=>{
 });
 app.get("/blackjack/play/resetMoney", async (req,res)=>{
   totalMoney = 1000;
+  numResets++;
   res.redirect("/blackjack/play");
 })
 /////////////////////////////////////////////////////////NASA\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
