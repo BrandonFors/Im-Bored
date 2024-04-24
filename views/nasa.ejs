@@ -16,7 +16,14 @@
 <body>
     <div class = "container">
         <%- include("partials/header.ejs") %>
-
+      <div>
+        <form class = "dimensions-container" action="/nasa" method="POST">
+          <input type = "text" name = "lat" value = "" placeholder="Lattitude">
+          <input type = "text" name = "lon" value = "" placeholder = "Longitude">
+          
+          <input type="submit" value="Get Image">
+        </form>
+      </div>
     </div>
 </body>
 <footer>

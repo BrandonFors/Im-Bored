@@ -26,6 +26,7 @@ var totalMoney = 1000;
 var numResets = 0;
 
 var nasaAPIKEY= "NNzgahJt0d8mfLEYzA2ovvN1eGJO7hlUYCojD6Iw";
+const NASA_API_URL = "https://api.nasa.gov/planetary/earth/imagery";
 
 
 app.use(express.static("public"));
@@ -526,6 +527,23 @@ app.get("/nasa",(req,res) =>{
     res.render("nasa.ejs");
 
     
+});
+app.post("/nasa",async (req,res) =>{
+  try{
+  const response = await axios.get(`${NASA_API_URL}`,{
+    params:{
+      lat: req.body.lat,
+      lon: req.body.lon,
+      dim: 0.025,
+      api_key: nasaAPIKEY,
+    }
+  });
+}catch{
+  res.status(500).json({ message: "Error fetching data" });
+
+}
+  console.log(response);
+  res.render("nasa.ejs");
 });
 /////////////////////////////////////////////////////CALCULATOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 app.get("/calculator",(req,res) =>{
