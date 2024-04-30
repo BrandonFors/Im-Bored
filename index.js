@@ -534,15 +534,17 @@ app.post("/nasa",async (req,res) =>{
     params:{
       lat: req.body.lat,
       lon: req.body.lon,
-      dim: 0.025,
+      date: req.body.date,
       api_key: nasaAPIKEY,
     }
+    
   });
+  console.log(response);
 }catch{
   res.status(500).json({ message: "Error fetching data" });
 
 }
-  console.log(response);
+  
   res.render("nasa.ejs");
 });
 /////////////////////////////////////////////////////CALCULATOR\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
