@@ -48,12 +48,14 @@ app.get("/bacon",(req,res) =>{
     res.render("bacon.ejs");
     
 });
+//generates a random image of bacon
 app.get("/baconImg",(req,res)=>{
     var width = Math.floor(Math.random() * 400)+201;
     var height = Math.floor(Math.random() * 400)+201;
     var url = "https://baconmockup.com/" + width+"/"+height+"/"
     res.render("bacon.ejs", {imgUrl: url});
 })
+//takes in data from the request and gets an image with input parameters
 app.post("/baconImg",(req,res)=>{
     var width = req.body["width"];
     var height = req.body["height"];
@@ -65,7 +67,7 @@ app.post("/baconImg",(req,res)=>{
         res.render("bacon.ejs", {invalidParam:true});
       } else {
         
-      
+        //if either height or width is not input, generate a random dimension
         if(height == ""){
             height = Math.floor(Math.random() * 800)+201;
         }
@@ -411,13 +413,17 @@ app.get("/blackjack/play/dealer",async(req,res)=>{
     }
     
     getTotalValuesString(dealerHand[0]);
-    //
+    //if the dealer has less than 17, then make a request to the deck API and draw a card to the dealer hand
     while(dealerHand[0].totalValues<17){
+    //request
     const response = await axios.get(`${BLACKJACK_API_URL}/${deckId}/draw/`,{
       params:{count:1}
     });
+    //push the requested card to the dealer hand
     dealerHand[0].cards.push(response.data.cards[0]);
+    //calculate the new value of the hand
     dealerHand[0].totalValues=calcTotalValue(dealerHand[0]);
+    //if there is an ace in the hand check if the ace can be used as 11 and if that is more than or equal to 17
     if(dealerHand[0].ace){
       if(dealerHand[0].totalValues+10>=17&&dealerHand[0].totalValues+10<=21){
         dealerHand[0].totalValues +=10;
@@ -425,11 +431,12 @@ app.get("/blackjack/play/dealer",async(req,res)=>{
     }
     getTotalValuesString(dealerHand[0]);
     }
+    //bust dealer if he drew over
     if(dealerHand[0].totalValues>21){
       dealerHand[0].bust = true;
       
     }
-    
+    //win and loss logic for after the dealer stands or busts
     for(var x=0; x<numHands;x++ ){
       if(playerHands[x].ace){
         if(playerHands[x].totalValues<=21){
@@ -448,7 +455,9 @@ app.get("/blackjack/play/dealer",async(req,res)=>{
         playerHands[x].win = 0;
       }
     }
+    //set dealer hand state to one so that the second card shows
     dealerHand[0].handState = 1;
+    //set player hand states to 4 so that the win/lose/push shows
     for(var x = 0; x<numHands; x++){
       playerHands[x].handState = 4;
     }
@@ -461,11 +470,10 @@ app.get("/blackjack/play/dealer",async(req,res)=>{
 
   }
 })
-//make a reset board/log results
-//make a function to check dealer blackjack in begining 
-//make it check for overbetting
+
 app.get("/blackjack/play/reset", async (req,res)=>{ 
   try{
+    //return money to total money based on if the hand was lost/won/push
     for(var x=0; x<numHands;x++ ){
       if(playerHands[x].win==1){
         
@@ -476,12 +484,13 @@ app.get("/blackjack/play/reset", async (req,res)=>{
         //nothing
       }
     }
+    //empty arrays so that they can be reset
     playerHands = [];
     dealerHand = [];
     playerCards = [];
 
-    console.log(playerHands);
-    console.log(dealerHand);
+   
+    //push new hand objects into player hands array
     for(var x=1;x<=numHands;x++){
       playerHands.push({
         id: x,
@@ -497,8 +506,9 @@ app.get("/blackjack/play/reset", async (req,res)=>{
         ace: false
 
       });  
-      console.log("yep");
+    
     }
+    //push a new dealer hand
     dealerHand.push({
       id: 1,
       cards: [],
@@ -508,15 +518,14 @@ app.get("/blackjack/play/reset", async (req,res)=>{
       handState: 0,
       ace: false
     });
-    console.log(playerHands);
-    console.log(dealerHand);
-    console.log("yay");
+    //reset game state to one (not 0 because we dont want to reselect the amount of hands)
     gameState = 1;
     res.redirect("/blackjack/play");
   }catch{
     res.status(500).json({ message: "Error fetching data" });
   }
 });
+//reset money function so if the player runs out of money they can restart
 app.get("/blackjack/play/resetMoney", async (req,res)=>{
   totalMoney = 1000;
   numResets++;
@@ -529,6 +538,7 @@ app.get("/nasa",(req,res) =>{
     
 });
 app.post("/nasa",async (req,res) =>{
+  //not working
   try{
   const response = await axios.get(`${NASA_API_URL}`,{
     params:{
@@ -552,10 +562,12 @@ app.get("/calculator",(req,res) =>{
   res.render("calculator.ejs");
   
 });
+//funi calculator
 app.post("/calculator",(req,res)=>{
   res.render("calculator.ejs", {image:"/images/ryanmeme.jpg", num1:req.body.num1, num2: req.body.num2})
 })
 ///////////////////////////////////////////////////////RANDOM\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+//returns a random page
 app.get("/random",(req,res)=>{
     var page = pages[Math.floor(Math.random() * numPages)];
     console.log(page);
