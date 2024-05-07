@@ -16,6 +16,7 @@
 <body class = "bacon-gradient-background">
     <div class = "container">
         <%- include("partials/header.ejs") %>
+        <!-- titles -->
         <div>
           <h1>
             Bacon Image
@@ -24,9 +25,11 @@
             Hit this random button to get a randomly sized image or input your own paramaters.
           </h2>
         </div>
+        <!-- button to generate a random img -->
         <div>
           <a class = "btn" href = "/baconImg">Random Img</a>
         </div>
+        <!-- form that you can submit with dimensions for an image to be generated -->
         <div class = "form-container">
           <form class = "dimensions-container" action="/baconImg" method="POST">
             <input type = "text" name="width" value = "" placeholder="Width">
@@ -36,15 +39,19 @@
           </form>
         </div>
         <div>
+                    <!-- takes in the imgUrl passed in with the render request and uses that url to diplay an img -->
+
           <% if(locals.imgUrl){%>
-          <img src = <%= imgUrl %>/
+          <img src = <%= imgUrl %>/>
           <% } %>
+            <!-- if an invalid param was passed, display an invalid image -->
           <% if(locals.invalidParam){ %>
           <img src = "images/no.jpg"/>
           <% } %>
           
         </div>
         <div>
+        <!-- display an image with input url -->
         <% if(locals.imgUrl){%>
           <a class = "btn" href = <%= imgUrl %> download>Download</a>
         <% } %>

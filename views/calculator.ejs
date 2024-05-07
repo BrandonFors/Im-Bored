@@ -16,6 +16,7 @@
     <div class = "container">
         <%- include("partials/header.ejs") %>
         <h2>Calculator</h2>
+        <!-- If the request contains data, display the input numbers and display image -->
         <% if(locals.num1){ %>
             <form class = "calculator" action = "/calculator" method = "POST">
                 <input type = "text" name = "<%= num1 %>"/>
@@ -25,6 +26,7 @@
             </form>
             <img class = "big-img" src = "<%= image %>"/>
         <% }else{ %>
+            <!-- form to be filled out with data to be added -->
             <form class = "calculator" action = "/calculator" method = "POST">
                 <input type = "text" name = "num1"/>
                 <h3> + </h3>
