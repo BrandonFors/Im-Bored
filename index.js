@@ -4,8 +4,8 @@ import axios from "axios";
 
 const app = express();
 const port = 3000;
-const pages= ["/bacon","/imgflip","/blackjack","/nasa"];
-const numPages = 4;
+const pages= ["/bacon","/imgflip","/blackjack","/nasa","/calculator"];
+const numPages = 5;
 //imgflip variables
 var letters = /[a-z]/i;
 //blackjack variables
