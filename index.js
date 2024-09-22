@@ -9,7 +9,6 @@ const numPages = 5;
 //imgflip variables
 var letters = /[a-z]/i;
 //blackjack variables
-//MAYBE MAKE AN ARRAY OF HANDS
 const BLACKJACK_API_URL = "https://www.deckofcardsapi.com/api/deck";
 var deckId;
 var remainingCards;
